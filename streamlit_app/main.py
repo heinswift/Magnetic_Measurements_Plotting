@@ -19,7 +19,7 @@ with open("Messpunktschema Vorlage.xlsx", "rb") as file:
 st.title("Messwert Visualisierung")
 
 # Upload excel sheet
-uploaded_file = st.file_uploader("Bitte eine Messwert-Datei hochladen")
+uploaded_file = st.file_uploader("Bitte eine Messwert-Datei hochladen. Eine Vorlage kann aus der Sidebar links heruntergeladen werden.")
 
 if uploaded_file is None:
     st.info('Bitte eine Messwert-Datei hochladen.')
