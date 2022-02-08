@@ -6,6 +6,16 @@ from utils import calculate_additional_columns
 from utils import construct_Z, process_excel, metric_options_list
 import matplotlib.patches as patches
 
+
+# Template download
+with open("Messpunktschema Vorlage.xlsx", "rb") as file:
+     btn = st.sidebar.download_button(
+             label="Tabellen Vorlage herunterladen",
+             data=file,
+             file_name="Messpunktschema Vorlage.xlsx"
+             )
+
+
 st.title("Messwert Visualisierung")
 
 # Upload excel sheet
@@ -14,8 +24,6 @@ uploaded_file = st.file_uploader("Bitte eine Messwert-Datei hochladen")
 if uploaded_file is None:
     st.info('Bitte eine Messwert-Datei hochladen.')
     st.stop()
-
-show_data = st.checkbox('Messwerttabelle anzeigen')        
 
 measurements_df, measurement_schema, parameters = process_excel(uploaded_file)
 
@@ -32,26 +40,25 @@ X, Y = np.meshgrid(x, y)
 
 measurements_df = calculate_additional_columns(measurements_df)
 
-if show_data:
-    st.subheader('Messdaten')
+with st.expander('Messdaten'):
     st.dataframe(measurements_df)
 
 # Plotting Parameters
-with st.expander('Parameter'):
+with st.expander('Einstellungen'):
     col1, col2 = st.columns(2)
 
     with col1:    
+
+        metric = st.radio('Visualisierte Größe', options=metric_options_list, index=0)
+    
+    with col2:
         style_options = ['Verläufe','Kacheln']
         style = st.radio('Stil', style_options, index=0)
 
         colormap_options = ['viridis','RdGy']
         colormap_style = st.radio('Farbpalette', colormap_options, index=0)
 
-        metric = st.radio('Visualisierte Größe', options=metric_options_list, index=0)
-    
-    with col2:
-        st.write('Zeige')
-        show_max_difference = st.checkbox('Maximalen Abstand zwischen zwei Werten')
+        show_max_difference = st.checkbox('Zeige maximalen Abstand zwischen zwei Werten')
         if show_max_difference:
             rectangle_color = st.color_picker('Rechteckfarbe', value='#E03A1D')
 
@@ -99,7 +106,7 @@ if show_max_difference:
 plt.setp(ax.get_xticklabels(), visible=False)
 plt.setp(ax.get_yticklabels(), visible=False)
 ax.tick_params(axis='both', which='both', length=0)
-plt.ylabel('Kopfende')
+#plt.ylabel('Kopfende')
 plt.colorbar()
 plt.tight_layout()
 st.pyplot(fig)
